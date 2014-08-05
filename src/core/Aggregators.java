@@ -68,6 +68,12 @@ public final class Aggregators {
   
   public static final Aggregator MED = new Med(
       Interpolation.LERP, "med");
+  
+  public static final Aggregator P95 = new Med(
+      Interpolation.LERP, "p95");
+
+  public static final Aggregator P99 = new Med(
+      Interpolation.LERP, "p99");
 
   /** Maps an aggregator name to its instance. */
   private static final HashMap<String, Aggregator> aggregators;
@@ -83,6 +89,8 @@ public final class Aggregators {
     aggregators.put("mimmin", MIMMIN);
     aggregators.put("mimmax", MIMMAX);
     aggregators.put("med", MED);
+    aggregators.put("p95", P95);
+    aggregators.put("p99", P99);
   }
 
   private Aggregators() {
@@ -208,6 +216,145 @@ public final class Aggregators {
       if (seen == 0) return 0;
       if (sample.length % 2 == 0) return (sample[sample.length/2] + sample[sample.length/2-1]) / 2;
       else return sample[sample.length/2];
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
+  }
+  private static final class P95 implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public P95(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      int SIZE = 10000;
+      int seen = 0;
+      double[] sample = new double[SIZE];
+      while (values.hasNextValue()) {
+        final double val = values.nextLongValue();
+        if (seen < SIZE) {
+          sample[seen++] = val;
+        } else {
+          int r = (int) (++seen * Math.random());
+          if (r < SIZE) {
+            sample[r] = val;
+          }
+        }
+      }
+      if (seen < SIZE) {
+        double[] smallsample = new double[seen];
+        for (int i = 0; i < seen; i++) {
+          smallsample[i] = sample[i];
+        }
+        sample = smallsample;
+      }
+      java.util.Arrays.sort(sample);
+      return (long) sample[(int)(sample.length*.95)];
+    }
+
+    public double runDouble(final Doubles values) {
+      int SIZE = 10000;
+      int seen = 0;
+      double[] sample = new double[SIZE];
+      while (values.hasNextValue()) {
+        final double val = values.nextDoubleValue();
+        if (seen < SIZE) {
+          sample[seen++] = val;
+        } else {
+          int r = (int) (++seen * Math.random());
+          if (r < SIZE) {
+            sample[r] = val;
+          }
+        }
+      }
+      if (seen < SIZE) {
+        double[] smallsample = new double[seen];
+        for (int i = 0; i < seen; i++) {
+          smallsample[i] = sample[i];
+        }
+        sample = smallsample;
+      }
+      java.util.Arrays.sort(sample);
+      return sample[(int)(sample.length*.95)];
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
+  }
+
+  private static final class P99 implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public P99(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      int SIZE = 10000;
+      int seen = 0;
+      double[] sample = new double[SIZE];
+      while (values.hasNextValue()) {
+        final double val = values.nextLongValue();
+        if (seen < SIZE) {
+          sample[seen++] = val;
+        } else {
+          int r = (int) (++seen * Math.random());
+          if (r < SIZE) {
+            sample[r] = val;
+          }
+        }
+      }
+      if (seen < SIZE) {
+        double[] smallsample = new double[seen];
+        for (int i = 0; i < seen; i++) {
+          smallsample[i] = sample[i];
+        }
+        sample = smallsample;
+      }
+      java.util.Arrays.sort(sample);
+      return (long) sample[(int)(sample.length*.99)];
+    }
+
+    public double runDouble(final Doubles values) {
+      int SIZE = 10000;
+      int seen = 0;
+      double[] sample = new double[SIZE];
+      while (values.hasNextValue()) {
+        final double val = values.nextDoubleValue();
+        if (seen < SIZE) {
+          sample[seen++] = val;
+        } else {
+          int r = (int) (++seen * Math.random());
+          if (r < SIZE) {
+            sample[r] = val;
+          }
+        }
+      }
+      if (seen < SIZE) {
+        double[] smallsample = new double[seen];
+        for (int i = 0; i < seen; i++) {
+          smallsample[i] = sample[i];
+        }
+        sample = smallsample;
+      }
+      java.util.Arrays.sort(sample);
+      return sample[(int)(sample.length*.99)];
     }
 
     public String toString() {
