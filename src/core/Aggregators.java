@@ -69,10 +69,10 @@ public final class Aggregators {
   public static final Aggregator MED = new Med(
       Interpolation.LERP, "med");
   
-  public static final Aggregator P95 = new Med(
+  public static final Aggregator P95 = new P95(
       Interpolation.LERP, "p95");
 
-  public static final Aggregator P99 = new Med(
+  public static final Aggregator P99 = new P99(
       Interpolation.LERP, "p99");
 
   /** Maps an aggregator name to its instance. */
