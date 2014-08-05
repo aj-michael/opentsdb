@@ -177,7 +177,7 @@ public final class Aggregators {
         sample = smallsample;
         SIZE = seen;
       }
-      Arrays.sort(sample);
+      java.util.Arrays.sort(sample);
       if (seen == 0) return 0;
       if (SIZE % 2 == 0) return (long) (sample[SIZE/2] + sample[SIZE/2 + 1]) / 2;
       else return (long) sample[SIZE/2];
@@ -206,7 +206,7 @@ public final class Aggregators {
         sample = smallsample;
         SIZE = seen;
       }
-      Arrays.sort(sample);
+      java.util.Arrays.sort(sample);
       if (seen == 0) return 0;
       if (SIZE % 2 == 0) return (sample[SIZE/2] + sample[SIZE/2 + 1]) / 2;
       else return sample[SIZE/2];
