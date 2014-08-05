@@ -175,12 +175,11 @@ public final class Aggregators {
           smallsample[i] = sample[i];
         }
         sample = smallsample;
-        SIZE = seen;
       }
       java.util.Arrays.sort(sample);
       if (seen == 0) return 0;
-      if (SIZE % 2 == 0) return (long) (sample[SIZE/2] + sample[SIZE/2 + 1]) / 2;
-      else return (long) sample[SIZE/2];
+      if (sample.length % 2 == 0) return (long) (sample[sample.length/2] + sample[sample.length/2+1]) / 2;
+      else return (long) sample[sample.length/2];
     }
 
     public double runDouble(final Doubles values) {
@@ -204,12 +203,11 @@ public final class Aggregators {
           smallsample[i] = sample[i];
         }
         sample = smallsample;
-        SIZE = seen;
       }
       java.util.Arrays.sort(sample);
       if (seen == 0) return 0;
-      if (SIZE % 2 == 0) return (sample[SIZE/2] + sample[SIZE/2 + 1]) / 2;
-      else return sample[SIZE/2];
+      if (sample.length % 2 == 0) return (sample[sample.length/2] + sample[sample.length/2+1]) / 2;
+      else return sample[sample.length/2];
     }
 
     public String toString() {
