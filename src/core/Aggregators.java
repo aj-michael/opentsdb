@@ -206,7 +206,7 @@ public final class Aggregators {
       }
       java.util.Arrays.sort(sample);
       if (seen == 0) return 0;
-      if (sample.length % 2 == 0) return (sample[sample.length/2] + sample[sample.length/2+1]) / 2;
+      if (sample.length % 2 == 0) return (sample[sample.length/2] + sample[sample.length/2-1]) / 2;
       else return sample[sample.length/2];
     }
 
