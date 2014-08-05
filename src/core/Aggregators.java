@@ -66,6 +66,9 @@ public final class Aggregators {
   public static final Aggregator MIMMAX = new Max(
       Interpolation.MIN, "mimmax");
   
+  public static final Aggregator MED = new Med(
+      Interpolation.LERP, "med");
+
   /** Maps an aggregator name to its instance. */
   private static final HashMap<String, Aggregator> aggregators;
 
@@ -79,6 +82,7 @@ public final class Aggregators {
     aggregators.put("zimsum", ZIMSUM);
     aggregators.put("mimmin", MIMMIN);
     aggregators.put("mimmax", MIMMAX);
+    aggregators.put("med", MED);
   }
 
   private Aggregators() {
@@ -139,6 +143,82 @@ public final class Aggregators {
       return method;
     }
     
+  }
+
+  private static final class Med implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public Med(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      int SIZE = 10000;
+      int seen = 0;
+      double[] sample = new double[SIZE];
+      while (values.hasNextValue()) {
+        final double val = values.nextLongValue();
+        if (seen < SIZE) {
+          sample[seen++] = val;
+        } else {
+          int r = (int) (++seen * Math.random());
+          if (r < SIZE) {
+            sample[r] = val;
+          }
+        }
+      }
+      if (seen < SIZE) {
+        double[] smallsample = new double[seen];
+        for (int i = 0; i < seen; i++) {
+          smallsample[i] = sample[i];
+        }
+        sample = smallsample;
+        SIZE = seen;
+      }
+      Arrays.sort(sample);
+      if (seen == 0) return 0;
+      if (SIZE % 2 == 0) return (long) (sample[SIZE/2] + sample[SIZE/2 + 1]) / 2;
+      else return (long) sample[SIZE/2];
+    }
+
+    public double runDouble(final Doubles values) {
+      int SIZE = 10000;
+      int seen = 0;
+      double[] sample = new double[SIZE];
+      while (values.hasNextValue()) {
+        final double val = values.nextDoubleValue();
+        if (seen < SIZE) {
+          sample[seen++] = val;
+        } else {
+          int r = (int) (++seen * Math.random());
+          if (r < SIZE) {
+            sample[r] = val;
+          }
+        }
+      }
+      if (seen < SIZE) {
+        double[] smallsample = new double[seen];
+        for (int i = 0; i < seen; i++) {
+          smallsample[i] = sample[i];
+        }
+        sample = smallsample;
+        SIZE = seen;
+      }
+      Arrays.sort(sample);
+      if (seen == 0) return 0;
+      if (SIZE % 2 == 0) return (sample[SIZE/2] + sample[SIZE/2 + 1]) / 2;
+      else return sample[SIZE/2];
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
   }
 
   private static final class Min implements Aggregator {
