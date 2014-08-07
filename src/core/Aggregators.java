@@ -75,6 +75,12 @@ public final class Aggregators {
   public static final Aggregator P99 = new P99(
       Interpolation.LERP, "p99");
 
+  public static final Aggregator PERCENT1 = new Percent1(
+      Interpolation.LERP, "percent1");
+
+  public static final Aggregator PERCENT2 = new Percent2(
+      Interpolation.LERP, "percent2");
+
   /** Maps an aggregator name to its instance. */
   private static final HashMap<String, Aggregator> aggregators;
 
@@ -91,6 +97,8 @@ public final class Aggregators {
     aggregators.put("med", MED);
     aggregators.put("p95", P95);
     aggregators.put("p99", P99);
+    aggregators.put("percent1", PERCENT1);
+    aggregators.put("percent2", PERCENT2);
   }
 
   private Aggregators() {
@@ -557,4 +565,85 @@ public final class Aggregators {
     
   }
 
+  private static final class Percent1 implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public Percent1(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      long total = 0;
+      long numOnes = 0;
+      do {
+        final double x = values.nextLongValue();
+        total++;
+        if (x == 1) numOnes++;
+      } while (values.hasNextValue());
+      return 100 * numOnes / total;
+    }
+
+    public double runDouble(final Doubles values) {
+      long total = 0;
+      long numOnes = 0;
+      do {
+        final double x = values.nextLongValue();
+        total++;
+        if (x == 1) numOnes++;
+      } while (values.hasNextValue());
+      return 100 * numOnes / (double) total;
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
+
+  }
+
+  private static final class Percent2 implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public Percent2(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      long total = 0;
+      long numTwos = 0;
+      do {
+        final double x = values.nextLongValue();
+        total++;
+        if (x == 2) numTwos++;
+      } while (values.hasNextValue());
+      return 100 * numTwos / total;
+    }
+
+    public double runDouble(final Doubles values) {
+      long total = 0;
+      long numTwos = 0;
+      do {
+        final double x = values.nextLongValue();
+        total++;
+        if (x == 1) numTwos++;
+      } while (values.hasNextValue());
+      return 100 * numTwos / (double) total;
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
+
+  }
 }
