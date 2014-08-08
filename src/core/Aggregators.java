@@ -75,6 +75,9 @@ public final class Aggregators {
   public static final Aggregator P99 = new P99(
       Interpolation.LERP, "p99");
 
+  public static final Aggregator PERCENT0 = new Percent0(
+      Interpolation.LERP, "percent0");
+
   public static final Aggregator PERCENT1 = new Percent1(
       Interpolation.LERP, "percent1");
 
@@ -97,6 +100,7 @@ public final class Aggregators {
     aggregators.put("med", MED);
     aggregators.put("p95", P95);
     aggregators.put("p99", P99);
+    aggregators.put("percent0", PERCENT0);
     aggregators.put("percent1", PERCENT1);
     aggregators.put("percent2", PERCENT2);
   }
@@ -563,6 +567,47 @@ public final class Aggregators {
       return method;
     }
     
+  }
+
+  private static final class Percent0 implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public Percent0(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      long total = 0;
+      long numZeros = 0;
+      do {
+        final int x = (int) values.nextLongValue();
+        total++;
+        if (x == 0) numZeros++;
+      } while (values.hasNextValue());
+      return 100 * numZeros / total;
+    }
+
+    public double runDouble(final Doubles values) {
+      long total = 0;
+      long numOnes = 0;
+      do {
+        final int x = (int) values.nextDoubleValue();
+        total++;
+        if (x == 0) numZeros++;
+      } while (values.hasNextValue());
+      return 100 * numZeros / (double) total;
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
+
   }
 
   private static final class Percent1 implements Aggregator {
