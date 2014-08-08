@@ -591,7 +591,7 @@ public final class Aggregators {
 
     public double runDouble(final Doubles values) {
       long total = 0;
-      long numOnes = 0;
+      long numZeros = 0;
       do {
         final int x = (int) values.nextDoubleValue();
         total++;
