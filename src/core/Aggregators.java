@@ -84,6 +84,9 @@ public final class Aggregators {
   public static final Aggregator PERCENT2 = new Percent2(
       Interpolation.LERP, "percent2");
 
+  public static final Aggregator ALWAYS1 = new Always1(
+      Interpolation.LERP, "always1");
+
   /** Maps an aggregator name to its instance. */
   private static final HashMap<String, Aggregator> aggregators;
 
@@ -103,6 +106,7 @@ public final class Aggregators {
     aggregators.put("percent0", PERCENT0);
     aggregators.put("percent1", PERCENT1);
     aggregators.put("percent2", PERCENT2);
+    aggregators.put("always1", ALWAYS1);
   }
 
   private Aggregators() {
@@ -680,6 +684,33 @@ public final class Aggregators {
         if (x == 1) numTwos++;
       } while (values.hasNextValue());
       return 100 * numTwos / (double) total;
+    }
+
+    public String toString() {
+      return name;
+    }
+
+    public Interpolation interpolationMethod() {
+      return method;
+    }
+
+  }
+  
+  private static final class Always1 implements Aggregator {
+    private final Interpolation method;
+    private final String name;
+
+    public Always1(final Interpolation method, final String name) {
+      this.method = method;
+      this.name = name;
+    }
+
+    public long runLong(final Longs values) {
+      return 1;
+    }
+
+    public double runDouble(final Doubles values) {
+      return 1;
     }
 
     public String toString() {
